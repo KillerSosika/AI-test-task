@@ -1,0 +1,16 @@
+paths:
+  data_raw: "data/raw"
+  data_processed: "data/processed"
+  data_final: "data/final"
+  
+  models_crf: "models/crf"
+  models_bert: "models/bert"
+  models_finetuned: "models/finetuned"
+
+model_params:
+  crf:
+    max_iterations: 100
+  bert:
+    model_name: "bert-base-cased"
+    batch_size: 16
+    epochs: 3
