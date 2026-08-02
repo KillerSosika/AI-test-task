@@ -27,7 +27,7 @@ class SatelliteLoFTRDataset(Dataset):
 
         h, w = img0_full.shape
         
-        # 1. ДИНАМІЧНИЙ КРОП: Кожної епохи вирізаємо випадковий шматок
+        # 1. DYNAMIC CROP: each epoch selects a random crop region
         if h > self.crop_size and w > self.crop_size:
             y = random.randint(0, h - self.crop_size)
             x = random.randint(0, w - self.crop_size)
@@ -36,22 +36,22 @@ class SatelliteLoFTRDataset(Dataset):
         else:
             img0, img1 = img0_full, img1_full
 
-        # 2. ДИНАМІЧНА АУГМЕНТАЦІЯ: Випадкові віддзеркалення для генералізації
+        # 2. DYNAMIC AUGMENTATION: random flips for better generalization
         if random.random() > 0.5:
-            img0 = cv2.flip(img0, 1) # Горизонтальне
+            img0 = cv2.flip(img0, 1)  # horizontal
             img1 = cv2.flip(img1, 1)
         if random.random() > 0.5:
-            img0 = cv2.flip(img0, 0) # Вертикальне
+            img0 = cv2.flip(img0, 0)  # vertical
             img1 = cv2.flip(img1, 0)
 
-        # Нормалізуємо для генерації GT (SIFT працює на 8-бітних)
+        # Normalize for pseudo-ground-truth generation (SIFT operates on 8-bit images)
         img0_8u = np.clip(img0 / 3000.0 * 255.0, 0, 255).astype(np.uint8)
         img1_8u = np.clip(img1 / 3000.0 * 255.0, 0, 255).astype(np.uint8)
 
-        # Генеруємо Ground Truth матрицю вже ПІСЛЯ кропу та аугментацій
+        # Generate the ground-truth matrix after crop and augmentation
         supervision = generate_loftr_supervision(img0_8u, img1_8u, self.coarse_scale)
 
-        # Переводимо у тензори для Трансформера [0, 1]
+        # Convert to tensor format expected by the transformer [0, 1]
         t_img0 = torch.from_numpy(img0 / 3000.0).unsqueeze(0).clamp(0, 1)
         t_img1 = torch.from_numpy(img1 / 3000.0).unsqueeze(0).clamp(0, 1)
 

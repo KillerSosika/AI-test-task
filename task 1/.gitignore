@@ -24,24 +24,20 @@ share/python-wheels/
 *.egg
 MANIFEST
 
+/_legacy_
+
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
 
-# ==========================================
-# MODELS & CHECKPOINTS (Легасі та важкі файли)
-# ==========================================
-models/finetuned/*
-!models/finetuned/.gitkeep
-models/checkpoints/*
-!models/checkpoints/.gitkeep
-*.bin
-*.safetensors
+# Model checkpoints / training artifacts
+*.ckpt
 *.pt
 *.pth
-*.ckpt
-trainer_state.json
-/_legacy_
+checkpoint-*
+**/checkpoint-*
+/models/finetuned
+
 
 # ==========================================
 # DATASETS (Сирі та проміжні дані)

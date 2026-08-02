@@ -3,11 +3,6 @@ import csv
 from pathlib import Path
 from typing import Any, Dict, List
 
-def save_json(data: Any, filepath: str) -> None:
-    path = Path(filepath)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8") as fh:
-        json.dump(data, fh, ensure_ascii=False, indent=2)
 
 def save_csv(data: List[Dict[str, Any]], filepath: str, fieldnames: List[str] = None) -> None:
     if not data:

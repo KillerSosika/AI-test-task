@@ -1,7 +1,7 @@
 import sys
 import os
 
-# Примусово додаємо корінь проєкту у Python path
+# Force the project root into Python path for local imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 import torch
@@ -14,7 +14,7 @@ from src.data.dataset import PairedDeforestationDataset
 from src.finetune.dataset import SatelliteLoFTRDataset
 
 def train_on_location(model, device, pair, loc_idx, data_dir):
-    """Навчання з офіційним NLL-Loss для LoFTR"""
+    """Train with the official NLL loss for LoFTR."""
     dataset = SatelliteLoFTRDataset(data_dir, [pair], crop_size=512)
     dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
 
@@ -29,7 +29,7 @@ def train_on_location(model, device, pair, loc_idx, data_dir):
     patience_counter = 0
 
     print(f"\n" + "="*50)
-    print(f"🌍 ЛОКАЦІЯ {loc_idx} | Початок навчання")
+    print(f"🌍 LOCATION {loc_idx} | Training started")
     print(f"="*50)
 
     for step in range(max_steps):
@@ -56,22 +56,22 @@ def train_on_location(model, device, pair, loc_idx, data_dir):
         conf_matrix = F.softmax(sim_matrix, dim=1) * F.softmax(sim_matrix, dim=2)
 
         # =======================================================
-        # ОФІЦІЙНИЙ LOFTR LOSS (Negative Log-Likelihood)
+        # OFFICIAL LOFTR LOSS (Negative Log-Likelihood)
         # =======================================================
         pos_mask = target > 0.5  
 
         if pos_mask.sum() < 5:
             continue
 
-        # Беремо ймовірності тільки для правильних точок і рахуємо логарифм.
-        # Додаємо 1e-8, щоб логарифм від нуля не видав NaN і не підірвав ваги
+        # Use probabilities only for the correct matches and compute the log likelihood.
+        # Add 1e-8 to avoid NaN from log(0) and prevent gradient collapse.
         loss = -torch.log(conf_matrix[pos_mask] + 1e-8).mean()
         # =======================================================
 
         if loss.requires_grad:
             loss.backward()
             
-            # Жорсткий кліпінг градієнтів рятує Трансформери від колапсу
+            # Strong gradient clipping prevents transformer collapse during training.
             torch.nn.utils.clip_grad_norm_(trainable_params, max_norm=0.5)
             
             optimizer.step()
@@ -83,34 +83,34 @@ def train_on_location(model, device, pair, loc_idx, data_dir):
             if current_loss < best_loss:
                 best_loss = current_loss
                 patience_counter = 0
-                status = "📉 Loss впав"
+                status = "📉 Loss improved"
             else:
                 patience_counter += 1
-                status = f"⚠️ Без змін ({patience_counter}/{patience})"
+                status = f"⚠️ No improvement ({patience_counter}/{patience})"
 
-            print(f"Крок [{step+1:02d}/{max_steps}] | Loss: {current_loss:.4f} | LR: {current_lr:.2e} | {status}")
+            print(f"Step [{step+1:02d}/{max_steps}] | Loss: {current_loss:.4f} | LR: {current_lr:.2e} | {status}")
 
             if patience_counter >= patience:
-                print(f"🛑 Локальний Early Stopping! Модель витиснула максимум.")
+                print(f"🛑 Local early stopping triggered; the model stopped improving.")
                 break
 
     return model
 
 def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f"🚀 Запуск правильного Fine-Tuning на пристрої: {device}")
+    print(f"🚀 Starting the LoFTR fine-tuning run on: {device}")
 
     data_dir = os.path.expanduser(r"~\.cache\kagglehub\datasets\isaienkov\deforestation-in-ukraine\versions\1")
     base_dataset = PairedDeforestationDataset(data_dir=data_dir)
     pairs = base_dataset.pairs
 
     if not pairs:
-        print("❌ Не знайдено пар зображень.")
+        print("❌ No image pairs were found.")
         return
 
-    print(f"✅ Знайдено {len(pairs)} локацій.")
+    print(f"✅ Found {len(pairs)} locations.")
 
-    # ВАЖЛИВО: Завантажуємо чисту модель, щоб перезаписати мертві ваги
+    # Important: load a fresh model to overwrite stale weights when retraining.
     model = LoFTR(pretrained='outdoor').to(device)
 
     for name, param in model.named_parameters():
@@ -126,7 +126,7 @@ def main():
 
     for global_epoch in range(global_epochs):
         print(f"\n" + "🔥"*25)
-        print(f"🔄 ГЛОБАЛЬНЕ КОЛО [{global_epoch+1}/{global_epochs}]")
+        print(f"🔄 GLOBAL EPOCH [{global_epoch+1}/{global_epochs}]")
         print(f"🔥"*25)
 
         for idx, pair in enumerate(pairs, start=1):
@@ -134,7 +134,7 @@ def main():
             torch.save(model.state_dict(), f"weights/loftr_loc_{idx}_epoch_{global_epoch+1}.pth")
 
     torch.save(model.state_dict(), save_path)
-    print(f"\n✅ Глобальний фініш! Ваги лежать тут: {save_path}")
+    print(f"\n✅ Training finished! Weights saved to: {save_path}")
 
 if __name__ == "__main__":
     main()
