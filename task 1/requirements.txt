@@ -1,0 +1,13 @@
+numpy
+pandas
+scikit-learn
+sklearn-crfsuite
+torch
+transformers
+datasets
+requests
+PyYAML
+python-dotenv
+matplotlib
+jupyter
+ 

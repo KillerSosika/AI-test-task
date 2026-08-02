@@ -1,0 +1,11 @@
+numpy
+opencv-python
+matplotlib
+rasterio
+torch
+kornia
+git+https://github.com/cvg/LightGlue.git
+kagglehub
+python-dotenv
+jupyter
+ 
