@@ -25,14 +25,14 @@ def save_csv(data: List[Dict[str, Any]], filepath: str, fieldnames: List[str] = 
         writer.writerows(data)
 
 def load_json(filepath: str) -> Any:
-    """Читає JSON файл."""
+    """Reads a JSON file."""
     with open(filepath, "r", encoding="utf-8") as f:
         return json.load(f)
 
 def save_json(data: Any, filepath: str) -> None:
     """
-    Зберігає дані у JSON файл. 
-    Автоматично створює всі необхідні батьківські директорії.
+    Saves data to a JSON file.
+    Automatically creates all required parent directories.
     """
     path = Path(filepath)
     path.parent.mkdir(parents=True, exist_ok=True)

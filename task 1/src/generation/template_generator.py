@@ -8,7 +8,7 @@ class TemplateGenerator:
     def __init__(self, mountains: List[str]):
         self.mountains = mountains
         
-        # 1. Позитивні шаблони (де точно є гора)
+        # 1. Positive templates (where a mountain is definitely present)
         self.positive_templates = [
             "We climbed {mountain} last week.",
             "My dream is to visit {mountain} in the winter.",
@@ -19,7 +19,7 @@ class TemplateGenerator:
             "Conquering {mountain} takes months of preparation."
         ]
 
-        # 2. Негативні шаблони (дистрактори - країни, загальні слова, займенники)
+        # 2. Negative templates (distractors: countries, generic words, pronouns)
         self.distractors = [
             "Nepal", "China", "Switzerland", "the hill", "a small hill", 
             "the river", "the city", "my house", "Europe", "Asia",
@@ -37,11 +37,11 @@ class TemplateGenerator:
         ]
 
     def _tokenize(self, text: str) -> List[str]:
-        """Універсальний токенізатор для ідеального збігу з CRF та Baseline."""
+        """Universal tokenizer for perfect matching with CRF and the baseline."""
         return re.findall(r"[\w']+|[.,!?;]", text)
 
     def generate_positive(self, num_per_mountain: int = 3) -> List[Dict[str, Any]]:
-        """Генерує приклади зі справжніми горами (B-MOUNTAIN, I-MOUNTAIN)."""
+        """Generates examples with real mountains (B-MOUNTAIN, I-MOUNTAIN)."""
         dataset = []
         for mountain in self.mountains:
             templates = random.choices(self.positive_templates, k=num_per_mountain)
@@ -57,11 +57,11 @@ class TemplateGenerator:
                 tokens = []
                 labels = []
 
-                # Додаємо ліву частину
+                # Add the left part
                 tokens.extend(left_tokens)
                 labels.extend(["O"] * len(left_tokens))
 
-                # Додаємо саму гору
+                # Add the mountain itself
                 if mountain_tokens:
                     tokens.append(mountain_tokens[0])
                     labels.append("B-MOUNTAIN")
@@ -69,7 +69,7 @@ class TemplateGenerator:
                         tokens.append(token)
                         labels.append("I-MOUNTAIN")
 
-                # Додаємо праву частину
+                # Add the right part
                 tokens.extend(right_tokens)
                 labels.extend(["O"] * len(right_tokens))
 
@@ -78,7 +78,7 @@ class TemplateGenerator:
         return dataset
 
     def generate_negative(self, num_samples: int = 1000) -> List[Dict[str, Any]]:
-        """Генерує негативні приклади, де всі токени отримують лейбл 'O'."""
+        """Generates negative examples where all tokens receive the label 'O'."""
         dataset = []
         for _ in range(num_samples):
             template = random.choice(self.negative_templates)

@@ -4,7 +4,7 @@ from typing import Dict, List, Any
 from pathlib import Path
 
 class ModelEvaluator:
-    """Клас для чесного тестування моделей NER на тестовому датасеті."""
+    """Class for fair evaluation of NER models on a test dataset."""
 
     def __init__(self, dict_model, crf_model, bert_model):
         self.models = {
@@ -14,7 +14,7 @@ class ModelEvaluator:
         }
 
     def _calculate_metrics(self, true_labels: List[List[str]], pred_labels: List[List[str]]) -> Dict[str, float]:
-        """Плоский розрахунок метрик для сутностей MOUNTAIN."""
+        """Flat metric calculation for MOUNTAIN entities."""
         true_flat = [label for seq in true_labels for label in seq]
         pred_flat = [label for seq in pred_labels for label in seq]
 
@@ -29,8 +29,8 @@ class ModelEvaluator:
         return {"precision": precision, "recall": recall, "f1": f1}
 
     def evaluate_all(self, test_data_path: str) -> Dict[str, Dict[str, float]]:
-        """Проганяє тестові дані через усі моделі та повертає метрики."""
-        print(f"📊 Починаємо чесну евалюацію на датасеті: {test_data_path}")
+        """Runs test data through all models and returns metrics."""
+        print(f"📊 Starting a fair evaluation on the dataset: {test_data_path}")
         
         with open(test_data_path, "r", encoding="utf-8") as f:
             test_data = json.load(f)
@@ -38,7 +38,7 @@ class ModelEvaluator:
         results = {}
 
         for model_name, model in self.models.items():
-            print(f"🔄 Оцінюємо {model_name}...")
+            print(f"🔄 Evaluating {model_name}...")
             all_true = []
             all_pred = []
             

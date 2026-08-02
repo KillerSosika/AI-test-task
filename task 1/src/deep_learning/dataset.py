@@ -2,7 +2,7 @@ from typing import Dict, List, Any
 from datasets import Dataset
 from transformers import PreTrainedTokenizerFast
 
-# Виносимо мапінги на рівень констант для всього проєкту
+# Move mappings to project-wide constants
 LABEL2ID = {"O": 0, "B-MOUNTAIN": 1, "I-MOUNTAIN": 2}
 ID2LABEL = {0: "O", 1: "B-MOUNTAIN", 2: "I-MOUNTAIN"}
 

@@ -25,7 +25,7 @@ def save_json(data: Any, filepath: str) -> None:
 def seed_everything(seed: int = 42) -> None:
     """Ensures reproducibility across random, numpy, and torch."""
     random.seed(seed)
-    # Якщо використовуєш torch/numpy, розкоментуй:
+    # If you are using torch/numpy, uncomment:
     # import numpy as np
     # import torch
     # np.random.seed(seed)

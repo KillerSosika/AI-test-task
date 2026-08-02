@@ -3,7 +3,7 @@ import csv
 from pathlib import Path
 import transformers
 
-# Додаємо корінь проєкту до шляху імпорту
+# Add the project root to the import path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from src.utils.config import load_config
@@ -17,12 +17,12 @@ def main():
     
     text = "Last year I visited Nepal to see Mount Everest, but next time I want to conquer K2 and maybe a small hill near my house."
     print("=" * 60)
-    print(" 🔥 ПРОСТИЙ ПЕРЕБІР УСІХ МОДЕЛЕЙ (ПОЛІМОРФІЗМ) 🔥")
+    print(" 🔥 SIMPLE COMPARISON OF ALL MODELS (POLYMORPHISM) 🔥")
     print("=" * 60)
     print(f"Input Text: {text}\n")
 
     # ---------------------------------------------------------
-    # 1. Ініціалізація всіх моделей
+    # 1. Initialize all models
     # ---------------------------------------------------------
     
     dict_model = DictionaryNER(ignore_case=True)
@@ -37,13 +37,13 @@ def main():
     bert_model = BERTModel(model_path=config['paths']['models_finetuned'])
 
     # ---------------------------------------------------------
-    # 2. ПЕРЕБІР
+    # 2. ITERATION
     # ---------------------------------------------------------
     
     models = [
-        ("1. Перебір словника (Dictionary)", dict_model),
-        ("2. Класичне ML (CRF Model)", crf_model),
-        ("3. Нейронка (Fine-Tuned BERT)", bert_model)
+        ("1. Dictionary lookup (Dictionary)", dict_model),
+        ("2. Classical ML (CRF Model)", crf_model),
+        ("3. Neural model (Fine-Tuned BERT)", bert_model)
     ]
 
     for name, model in models:

@@ -266,12 +266,7 @@ Switzerland     O
 The project supports evaluation using Precision, Recall, and F1-score.
 
 Suggested comparison:
-
-| Model      | Precision | Recall | F1-score |
-| ---------- | --------: | -----: | -------: |
-| Dictionary |         - |      - |        - |
-| CRF        |         - |      - |        - |
-| BERT       |         - |      - |        - |
+![alt text](image.png)
 
 ---
 
@@ -331,7 +326,3 @@ Suggested comparison:
 * Automatic benchmark generation
 
 ---
-
-# Author
-
-Developed as an NLP project for mountain name recognition using classical machine learning and transformer-based approaches.

@@ -9,7 +9,7 @@ from src.models.bert_model import BERTModel
 from src.llm.llm_judge import LocalLLMJudge
 
 def main():
-    # Вимикаємо зайві ворнінги від Hugging Face для чистоти виводу
+    # Disable extra Hugging Face warnings to keep the output clean
     transformers.logging.set_verbosity_error()
     
     config = load_config()
@@ -53,7 +53,7 @@ def main():
     print("\n--- Phase 2: LLM Validation (Ollama) ---")
     print(f"Sending candidates to Judge: {candidates}...")
     
-    # Ініціалізуємо нашого локального суддю
+    # Initialize our local judge
     judge = LocalLLMJudge(model_name="llama3")
     final_mountains = judge.filter_entities(candidates)
     

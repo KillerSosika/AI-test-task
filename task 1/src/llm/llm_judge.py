@@ -16,7 +16,7 @@ class LocalLLMJudge:
         if not candidates:
             return []
 
-        # Формуємо жорсткий промпт для моделі, щоб вона віддавала ТІЛЬКИ JSON
+        # Build a strict prompt so the model returns only JSON
         prompt = (
             "You are an expert geographer and data annotator. "
             f"Review this list of extracted geographical entities: {candidates}\n"
@@ -32,7 +32,7 @@ class LocalLLMJudge:
             "model": self.model_name,
             "prompt": prompt,
             "stream": False,
-            "format": "json"  # Змушуємо Ollama віддавати чистий JSON
+            "format": "json"  # Force Ollama to return clean JSON
         }
 
         req = urllib.request.Request(

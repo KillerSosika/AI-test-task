@@ -25,7 +25,7 @@ def main():
     train_path = f"{config['paths']['data_final']}/train.json"
     val_path = f"{config['paths']['data_final']}/validation.json"
 
-    # 1. Завантажуємо гори
+    # 1. Load mountains
     mountains = []
     try:
         with open(csv_path, "r", encoding="utf-8") as f:
@@ -39,7 +39,7 @@ def main():
 
     print(f"Loaded {len(mountains)} mountains.")
 
-    # 2. Генеруємо дані
+    # 2. Generate data
     generator = TemplateGenerator(mountains)
     
     print(f"Generating positive examples ({args.samples} per mountain)...")
@@ -48,16 +48,16 @@ def main():
     print(f"Generating {args.negatives} negative examples (distractors)...")
     negative_data = generator.generate_negative(num_samples=args.negatives)
 
-    # 3. Об'єднуємо і перемішуємо
+    # 3. Merge and shuffle
     all_data = positive_data + negative_data
     random.shuffle(all_data)
 
-    # 4. Спліт 80/20
+    # 4. 80/20 split
     split_idx = int(len(all_data) * 0.8)
     train_data = all_data[:split_idx]
     val_data = all_data[split_idx:]
 
-    # 5. Зберігаємо
+    # 5. Save
     save_json(train_data, train_path)
     save_json(val_data, val_path)
 

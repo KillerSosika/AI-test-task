@@ -28,7 +28,7 @@ def run_script(script_name: str, args: list = None) -> None:
     print(f"{'='*60}")
     
     try:
-        # Запускаємо процес і виводимо його логи в реальному часі
+        # Run the process and stream its logs in real time
         subprocess.run(cmd, check=True)
     except subprocess.CalledProcessError as e:
         print(f"\n❌ FAILED: {script_name} crashed with exit code {e.returncode}")
@@ -62,7 +62,7 @@ def main():
 
     # 4. Model Training (Deep Learning)
     if not args.skip_train_bert:
-        # Можеш винести epochs та batch-size в аргументи main.py за бажанням
+        # You can move epochs and batch size into main.py arguments if desired
         run_script("train_bert.py", ["--epochs", "3", "--batch-size", "8"])
     else:
         print("⏭️ Skipping BERT Training...")
